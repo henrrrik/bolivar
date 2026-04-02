@@ -12,6 +12,7 @@ type Message struct {
 	GarminID  string    `json:"garmin_id"`
 	Sender    string    `json:"sender"`
 	Text      string    `json:"message"`
+	URL       string    `json:"url"`
 	Lat       float64   `json:"lat"`
 	Lon       float64   `json:"lon"`
 	CreatedAt time.Time `json:"created_at"`
@@ -34,6 +35,7 @@ func OpenDB(path string) (*sql.DB, error) {
 			garmin_id  TEXT,
 			sender     TEXT,
 			message    TEXT,
+			url        TEXT,
 			lat        REAL NOT NULL,
 			lon        REAL NOT NULL,
 			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -44,19 +46,22 @@ func OpenDB(path string) (*sql.DB, error) {
 		return nil, err
 	}
 
+	// Migrate existing databases that lack the url column.
+	db.Exec(`ALTER TABLE messages ADD COLUMN url TEXT`)
+
 	return db, nil
 }
 
 func InsertMessage(db *sql.DB, m Message) error {
 	_, err := db.Exec(
-		`INSERT OR IGNORE INTO messages (garmin_id, sender, message, lat, lon, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-		m.GarminID, m.Sender, m.Text, m.Lat, m.Lon, m.CreatedAt,
+		`INSERT OR IGNORE INTO messages (garmin_id, sender, message, url, lat, lon, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		m.GarminID, m.Sender, m.Text, m.URL, m.Lat, m.Lon, m.CreatedAt,
 	)
 	return err
 }
 
 func ListMessages(db *sql.DB) ([]Message, error) {
-	rows, err := db.Query(`SELECT id, garmin_id, sender, message, lat, lon, created_at FROM messages ORDER BY created_at DESC`)
+	rows, err := db.Query(`SELECT id, garmin_id, sender, message, COALESCE(url, ''), lat, lon, created_at FROM messages ORDER BY created_at DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +70,7 @@ func ListMessages(db *sql.DB) ([]Message, error) {
 	var msgs []Message
 	for rows.Next() {
 		var m Message
-		if err := rows.Scan(&m.ID, &m.GarminID, &m.Sender, &m.Text, &m.Lat, &m.Lon, &m.CreatedAt); err != nil {
+		if err := rows.Scan(&m.ID, &m.GarminID, &m.Sender, &m.Text, &m.URL, &m.Lat, &m.Lon, &m.CreatedAt); err != nil {
 			return nil, err
 		}
 		msgs = append(msgs, m)

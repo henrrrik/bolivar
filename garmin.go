@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -30,6 +31,10 @@ func ExtractGarminURL(text string) (url string, extID string, ok bool) {
 	extID = m[1]
 	url = "https://eur.explore.garmin.com/textmessage/viewmsg?extId=" + extID
 	return url, extID, true
+}
+
+func StripGarminURL(text string) string {
+	return strings.TrimSpace(inreachLinkRe.ReplaceAllString(text, ""))
 }
 
 func FetchGarminLocation(ctx context.Context, url string) (GarminResult, error) {

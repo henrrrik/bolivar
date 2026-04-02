@@ -74,7 +74,8 @@ func (s *Server) handleWebhook(w http.ResponseWriter, r *http.Request) {
 	msg := Message{
 		GarminID:  extID,
 		Sender:    result.Sender,
-		Text:      msgText,
+		Text:      StripGarminURL(msgText),
+		URL:       garminLink,
 		Lat:       result.Lat,
 		Lon:       result.Lon,
 		CreatedAt: time.Now().UTC(),

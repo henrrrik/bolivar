@@ -49,6 +49,24 @@ func TestExtractGarminURL(t *testing.T) {
 	}
 }
 
+func TestStripGarminURL(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"Hello! inreachlink.com/abc123   ", "Hello!"},
+		{"inreachlink.com/abc123", ""},
+		{"No link here", "No link here"},
+		{"Before inreachlink.com/xyz After", "Before  After"},
+	}
+	for _, tt := range tests {
+		got := StripGarminURL(tt.input)
+		if got != tt.want {
+			t.Errorf("StripGarminURL(%q) = %q, want %q", tt.input, got, tt.want)
+		}
+	}
+}
+
 const sampleGarminHTML = `
 <!DOCTYPE html>
 <html>
