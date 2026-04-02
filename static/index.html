@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bolivar</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        #map { width: 100vw; height: 100vh; }
+        .popup-content { font-size: 13px; line-height: 1.4; max-width: 220px; }
+        .popup-content .sender { font-weight: 600; margin-bottom: 4px; }
+        .popup-content .time { color: #666; font-size: 11px; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        mapboxgl.accessToken = '{{.MapboxToken}}';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/outdoors-v12',
+            center: [18.07, 59.33],
+            zoom: 5
+        });
+
+        map.addControl(new mapboxgl.NavigationControl());
+
+        fetch('/api/messages')
+            .then(r => r.json())
+            .then(messages => {
+                if (messages.length === 0) return;
+
+                const bounds = new mapboxgl.LngLatBounds();
+
+                messages.forEach(msg => {
+                    const el = document.createElement('div');
+                    const time = new Date(msg.created_at).toLocaleString();
+                    const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+                        `<div class="popup-content">
+                            <div class="sender">${msg.sender || 'Unknown'}</div>
+                            <div class="message">${msg.message || ''}</div>
+                            <div class="time">${time}</div>
+                        </div>`
+                    );
+
+                    new mapboxgl.Marker()
+                        .setLngLat([msg.lon, msg.lat])
+                        .setPopup(popup)
+                        .addTo(map);
+
+                    bounds.extend([msg.lon, msg.lat]);
+                });
+
+                map.fitBounds(bounds, { padding: 60, maxZoom: 14 });
+            });
+    </script>
+</body>
+</html>
