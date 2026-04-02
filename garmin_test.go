@@ -13,17 +13,10 @@ func TestExtractGarminURL(t *testing.T) {
 		wantOK  bool
 	}{
 		{
-			name:    "eur subdomain",
-			input:   "Hello from the trail! https://eur.explore.garmin.com/textmessage/viewmsg?extId=gDCYYWDrMkokPJUKOOWO8ng",
-			wantURL: "https://eur.explore.garmin.com/textmessage/viewmsg?extId=gDCYYWDrMkokPJUKOOWO8ng",
-			wantID:  "gDCYYWDrMkokPJUKOOWO8ng",
-			wantOK:  true,
-		},
-		{
-			name:    "no subdomain",
-			input:   "Check this: https://explore.garmin.com/textmessage/viewmsg?extId=abc123",
-			wantURL: "https://explore.garmin.com/textmessage/viewmsg?extId=abc123",
-			wantID:  "abc123",
+			name:    "inreachlink short url",
+			input:   "Jag önskar att du var här! inreachlink.com/gRrVf0Zovbj_77GjLmij6wQ   ",
+			wantURL: "https://eur.explore.garmin.com/textmessage/viewmsg?extId=gRrVf0Zovbj_77GjLmij6wQ",
+			wantID:  "gRrVf0Zovbj_77GjLmij6wQ",
 			wantOK:  true,
 		},
 		{

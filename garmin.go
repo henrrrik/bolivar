@@ -13,7 +13,7 @@ var (
 	latRe     = regexp.MustCompile(`\blat(?:itude)?\s*[:=]\s*([-]?\d+\.\d+)`)
 	lonRe     = regexp.MustCompile(`\b(?:lng|lon|longitude)\s*[:=]\s*([-]?\d+\.\d+)`)
 	senderRe  = regexp.MustCompile(`<title>\s*inReach Message from (.+?)\s*</title>`)
-	garminURL = regexp.MustCompile(`https?://(?:eur\.)?explore\.garmin\.com/textmessage/viewmsg\?extId=(\w+)`)
+	inreachLinkRe = regexp.MustCompile(`inreachlink\.com/(\w+)`)
 )
 
 type GarminResult struct {
@@ -23,11 +23,13 @@ type GarminResult struct {
 }
 
 func ExtractGarminURL(text string) (url string, extID string, ok bool) {
-	m := garminURL.FindStringSubmatch(text)
+	m := inreachLinkRe.FindStringSubmatch(text)
 	if m == nil {
 		return "", "", false
 	}
-	return m[0], m[1], true
+	extID = m[1]
+	url = "https://eur.explore.garmin.com/textmessage/viewmsg?extId=" + extID
+	return url, extID, true
 }
 
 func FetchGarminLocation(ctx context.Context, url string) (GarminResult, error) {
