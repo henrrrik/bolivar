@@ -37,19 +37,15 @@
                 const bounds = new mapboxgl.LngLatBounds();
 
                 messages.filter(msg => msg.lat != null && msg.lon != null).forEach(msg => {
+                    const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
                     const time = new Date(msg.created_at).toLocaleString();
-                    const el = document.createElement('div');
-                    el.className = 'popup-content';
-                    const s = el.appendChild(document.createElement('div'));
-                    s.className = 'sender';
-                    s.textContent = msg.sender || 'Unknown';
-                    const m = el.appendChild(document.createElement('div'));
-                    m.className = 'message';
-                    m.textContent = msg.message || '';
-                    const tm = el.appendChild(document.createElement('div'));
-                    tm.className = 'time';
-                    tm.textContent = time;
-                    const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(el);
+                    const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+                        `<div class="popup-content">
+                            <div class="sender">${esc(msg.sender || 'Unknown')}</div>
+                            <div class="message">${esc(msg.message || '')}</div>
+                            <div class="time">${esc(time)}</div>
+                        </div>`
+                    );
 
                     new mapboxgl.Marker()
                         .setLngLat([msg.lon, msg.lat])
