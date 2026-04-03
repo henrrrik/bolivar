@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -37,6 +38,8 @@ func StripGarminURL(text string) string {
 	return strings.TrimSpace(inreachLinkRe.ReplaceAllString(text, ""))
 }
 
+var garminClient = &http.Client{Timeout: 15 * time.Second}
+
 func FetchGarminLocation(ctx context.Context, url string) (GarminResult, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -44,7 +47,7 @@ func FetchGarminLocation(ctx context.Context, url string) (GarminResult, error) 
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := garminClient.Do(req)
 	if err != nil {
 		return GarminResult{}, err
 	}

@@ -37,13 +37,13 @@
                 const bounds = new mapboxgl.LngLatBounds();
 
                 messages.forEach(msg => {
-                    const el = document.createElement('div');
+                    const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
                     const time = new Date(msg.created_at).toLocaleString();
                     const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                         `<div class="popup-content">
-                            <div class="sender">${msg.sender || 'Unknown'}</div>
-                            <div class="message">${msg.message || ''}</div>
-                            <div class="time">${time}</div>
+                            <div class="sender">${esc(msg.sender || 'Unknown')}</div>
+                            <div class="message">${esc(msg.message || '')}</div>
+                            <div class="time">${esc(time)}</div>
                         </div>`
                     );
 
