@@ -37,13 +37,7 @@ func (t *TelegramNotifier) Send(ctx context.Context, msg Message) error {
 		sender = "Unknown"
 	}
 
-	var text string
-	if msg.HasLocation() {
-		text = fmt.Sprintf("📍 *%s*\n%s\nhttps://www.google.com/maps?q=%f,%f",
-			sender, msg.Text, *msg.Lat, *msg.Lon)
-	} else {
-		text = fmt.Sprintf("*%s*\n%s", sender, msg.Text)
-	}
+	text := fmt.Sprintf("*%s*\n%s", sender, msg.Text)
 
 	if err := t.sendMessage(ctx, text); err != nil {
 		return fmt.Errorf("sendMessage: %w", err)
