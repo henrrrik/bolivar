@@ -31,8 +31,9 @@ Single `main` package, flat layout. No frameworks — stdlib `net/http` with Go 
 - `main.go` — config from env vars, route wiring, server start
 - `handler.go` — HTTP handlers: `POST /webhook` (Basic Auth), `GET /api/messages`, `GET /health`, `GET /`
 - `garmin.go` — fetches Garmin inReach page HTML, extracts lat/lon with regex
-- `db.go` — SQLite via `modernc.org/sqlite` (pure Go), schema migration, insert (idempotent on `garmin_id`), list
-- `static/index.html` — Mapbox GL JS map page, templated with `html/template` to inject Mapbox token
+- `db.go` — SQLite via `modernc.org/sqlite` (pure Go), schema migration, insert (idempotent on `garmin_id`), list. Lat/lon are nullable (`*float64`) for messages without GPS coordinates
+- `telegram.go` — optional Telegram notifications (text message + location pin). Nil-safe — disabled when env vars are unset
+- `static/index.html` — Mapbox GL JS map page, embedded via `go:embed`, templated with `html/template` to inject Mapbox token
 
 ## Data Flow
 

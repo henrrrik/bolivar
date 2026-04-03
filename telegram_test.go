@@ -31,3 +31,24 @@ func TestNewTelegramNotifierEmpty(t *testing.T) {
 		t.Error("expected non-nil with both set")
 	}
 }
+
+
+
+func TestEscapeHTML(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"hello", "hello"},
+		{"a & b", "a &amp; b"},
+		{"<script>alert('xss')</script>", "&lt;script&gt;alert('xss')&lt;/script&gt;"},
+		{"Henrik & Anna", "Henrik &amp; Anna"},
+		{"", ""},
+	}
+	for _, tt := range tests {
+		got := escapeHTML(tt.input)
+		if got != tt.want {
+			t.Errorf("escapeHTML(%q) = %q, want %q", tt.input, got, tt.want)
+		}
+	}
+}

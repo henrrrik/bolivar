@@ -120,6 +120,29 @@ longitude = 151.215256;
 </html>
 `
 
+const sampleGarminHTMLEntities = `
+<html>
+<head><title>inReach Message from Henrik &amp; Anna</title></head>
+<body>
+<script>
+var lat = 63.123456;
+var lng = 14.654321;
+</script>
+</body>
+</html>
+`
+
+func TestExtractCoordsHTMLEntities(t *testing.T) {
+	m := senderRe.FindStringSubmatch(sampleGarminHTMLEntities)
+	if m == nil {
+		t.Fatal("sender regex did not match")
+	}
+	// The regex captures the raw HTML — html.UnescapeString is applied in FetchGarminLocation
+	if m[1] != "Henrik &amp; Anna" {
+		t.Errorf("sender = %q, want 'Henrik &amp; Anna'", m[1])
+	}
+}
+
 func TestExtractCoordsVariant(t *testing.T) {
 	m := latRe.FindStringSubmatch(sampleGarminHTML2)
 	if m == nil {

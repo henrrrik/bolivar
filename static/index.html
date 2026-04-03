@@ -36,8 +36,9 @@
 
                 const bounds = new mapboxgl.LngLatBounds();
 
+                const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
                 messages.filter(msg => msg.lat != null && msg.lon != null).forEach(msg => {
-                    const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
                     const time = new Date(msg.created_at).toLocaleString();
                     const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                         `<div class="popup-content">
