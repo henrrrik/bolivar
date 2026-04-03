@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -27,6 +28,13 @@ func NewTelegramNotifier(token, chatID string) *TelegramNotifier {
 	}
 }
 
+func escapeHTML(s string) string {
+	s = strings.ReplaceAll(s, "&", "&amp;")
+	s = strings.ReplaceAll(s, "<", "&lt;")
+	s = strings.ReplaceAll(s, ">", "&gt;")
+	return s
+}
+
 func (t *TelegramNotifier) Send(ctx context.Context, msg Message) error {
 	if t == nil {
 		return nil
@@ -39,10 +47,10 @@ func (t *TelegramNotifier) Send(ctx context.Context, msg Message) error {
 
 	var text string
 	if msg.HasLocation() {
-		text = fmt.Sprintf("📍 *%s*\n%s\nhttps://www.google.com/maps?q=%f,%f",
-			sender, msg.Text, *msg.Lat, *msg.Lon)
+		text = fmt.Sprintf("📍 <b>%s</b>\n%s\nhttps://www.google.com/maps?q=%f,%f",
+			escapeHTML(sender), escapeHTML(msg.Text), *msg.Lat, *msg.Lon)
 	} else {
-		text = fmt.Sprintf("*%s*\n%s", sender, msg.Text)
+		text = fmt.Sprintf("<b>%s</b>\n%s", escapeHTML(sender), escapeHTML(msg.Text))
 	}
 
 	if err := t.sendMessage(ctx, text); err != nil {
@@ -63,7 +71,7 @@ func (t *TelegramNotifier) sendMessage(ctx context.Context, text string) error {
 	resp, err := t.client.PostForm(apiURL, url.Values{
 		"chat_id":    {t.chatID},
 		"text":       {text},
-		"parse_mode": {"Markdown"},
+		"parse_mode": {"HTML"},
 	})
 	if err != nil {
 		return err
