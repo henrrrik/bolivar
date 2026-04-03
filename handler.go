@@ -70,21 +70,20 @@ func (s *Server) handleWebhook(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
+	msg := Message{
+		GarminID:  extID,
+		Text:      StripGarminURL(msgText),
+		URL:       garminLink,
+		CreatedAt: time.Now().UTC(),
+	}
+
 	result, err := FetchGarminLocation(ctx, garminLink)
 	if err != nil {
 		slog.Error("failed to fetch Garmin location", "url", garminLink, "error", err)
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
-	msg := Message{
-		GarminID:  extID,
-		Sender:    result.Sender,
-		Text:      StripGarminURL(msgText),
-		URL:       garminLink,
-		Lat:       result.Lat,
-		Lon:       result.Lon,
-		CreatedAt: time.Now().UTC(),
+	} else {
+		msg.Sender = result.Sender
+		msg.Lat = &result.Lat
+		msg.Lon = &result.Lon
 	}
 
 	if err := InsertMessage(s.db, msg); err != nil {

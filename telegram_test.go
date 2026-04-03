@@ -11,8 +11,8 @@ func TestNilNotifierSend(t *testing.T) {
 	err := n.Send(context.Background(), Message{
 		Sender:    "Test",
 		Text:      "Hello",
-		Lat:       59.0,
-		Lon:       18.0,
+		Lat:       pf(59.0),
+		Lon:       pf(18.0),
 		CreatedAt: time.Now(),
 	})
 	if err != nil {

@@ -8,14 +8,18 @@ import (
 )
 
 type Message struct {
-	ID        int64     `json:"id"`
-	GarminID  string    `json:"garmin_id"`
-	Sender    string    `json:"sender"`
-	Text      string    `json:"message"`
-	URL       string    `json:"url"`
-	Lat       float64   `json:"lat"`
-	Lon       float64   `json:"lon"`
+	ID        int64    `json:"id"`
+	GarminID  string   `json:"garmin_id"`
+	Sender    string   `json:"sender"`
+	Text      string   `json:"message"`
+	URL       string   `json:"url"`
+	Lat       *float64 `json:"lat"`
+	Lon       *float64 `json:"lon"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+func (m Message) HasLocation() bool {
+	return m.Lat != nil && m.Lon != nil
 }
 
 func OpenDB(path string) (*sql.DB, error) {
@@ -36,8 +40,8 @@ func OpenDB(path string) (*sql.DB, error) {
 			sender     TEXT,
 			message    TEXT,
 			url        TEXT,
-			lat        REAL NOT NULL,
-			lon        REAL NOT NULL,
+			lat        REAL,
+			lon        REAL,
 			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);
 		CREATE UNIQUE INDEX IF NOT EXISTS idx_garmin_id ON messages(garmin_id);
@@ -70,8 +74,15 @@ func ListMessages(db *sql.DB) ([]Message, error) {
 	var msgs []Message
 	for rows.Next() {
 		var m Message
-		if err := rows.Scan(&m.ID, &m.GarminID, &m.Sender, &m.Text, &m.URL, &m.Lat, &m.Lon, &m.CreatedAt); err != nil {
+		var lat, lon sql.NullFloat64
+		if err := rows.Scan(&m.ID, &m.GarminID, &m.Sender, &m.Text, &m.URL, &lat, &lon, &m.CreatedAt); err != nil {
 			return nil, err
+		}
+		if lat.Valid {
+			m.Lat = &lat.Float64
+		}
+		if lon.Valid {
+			m.Lon = &lon.Float64
 		}
 		msgs = append(msgs, m)
 	}
