@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Bolivar receives SMS messages from a Garmin inReach device via 46elks webhooks, parses geolocation from the embedded Garmin map link, stores messages in SQLite, and displays them on a Mapbox Outdoors map.
 
+red/green tdd
+
 ## Commands
 
 ```bash
@@ -42,4 +44,9 @@ Single `main` package, flat layout. No frameworks — stdlib `net/http` with Go 
 
 ## Configuration
 
-All via environment variables. Required: `MAPBOX_TOKEN`, `WEBHOOK_USER`, `WEBHOOK_PASS`. Optional: `DB_PATH` (default: `bolivar.db`), `LISTEN_ADDR` (default: `:8080`).
+All via environment variables. Required: `MAPBOX_TOKEN`, `WEBHOOK_USER`, `WEBHOOK_PASS`. Optional: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `DB_PATH` (default: `bolivar.db`), `LISTEN_ADDR` (default: `:8080`).
+
+## Workflow
+
+- Create a PR for all changes — do not push directly to master.
+- CI runs tests and deploys to Fly.io on merge to master.
