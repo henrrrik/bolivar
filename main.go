@@ -23,7 +23,15 @@ func main() {
 	}
 	defer db.Close()
 
-	srv := NewServer(db, mapboxToken, webhookUser, webhookPass)
+	telegram := NewTelegramNotifier(
+		os.Getenv("TELEGRAM_BOT_TOKEN"),
+		os.Getenv("TELEGRAM_CHAT_ID"),
+	)
+	if telegram != nil {
+		slog.Info("Telegram notifications enabled")
+	}
+
+	srv := NewServer(db, mapboxToken, webhookUser, webhookPass, telegram)
 
 	httpSrv := &http.Server{
 		Addr:              listenAddr,

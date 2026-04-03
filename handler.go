@@ -20,9 +20,10 @@ type Server struct {
 	webhookUser  string
 	webhookPass  string
 	mapTemplate  *template.Template
+	telegram     *TelegramNotifier
 }
 
-func NewServer(db *sql.DB, mapboxToken, webhookUser, webhookPass string) *Server {
+func NewServer(db *sql.DB, mapboxToken, webhookUser, webhookPass string, telegram *TelegramNotifier) *Server {
 	tmpl := template.Must(template.New("index").Parse(indexHTML))
 	return &Server{
 		db:          db,
@@ -30,6 +31,7 @@ func NewServer(db *sql.DB, mapboxToken, webhookUser, webhookPass string) *Server
 		webhookUser: webhookUser,
 		webhookPass: webhookPass,
 		mapTemplate: tmpl,
+		telegram:    telegram,
 	}
 }
 
@@ -87,6 +89,10 @@ func (s *Server) handleWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if err := InsertMessage(s.db, msg); err != nil {
 		slog.Error("failed to insert message", "error", err)
+	}
+
+	if err := s.telegram.Send(ctx, msg); err != nil {
+		slog.Error("failed to send Telegram notification", "error", err)
 	}
 
 	w.WriteHeader(http.StatusOK)

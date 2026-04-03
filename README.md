@@ -13,5 +13,7 @@ Bolivar receives Garmin inReach satellite text messages through [46elks](https:/
 | `MAPBOX_TOKEN` | Yes | — | Mapbox GL JS access token |
 | `WEBHOOK_USER` | Yes | — | Basic auth username for the 46elks webhook |
 | `WEBHOOK_PASS` | Yes | — | Basic auth password for the 46elks webhook |
+| `TELEGRAM_BOT_TOKEN` | No | — | Telegram bot API token for notifications |
+| `TELEGRAM_CHAT_ID` | No | — | Telegram group chat ID for notifications |
 | `DB_PATH` | No | `bolivar.db` | Path to the SQLite database file |
 | `LISTEN_ADDR` | No | `:8080` | Address to listen on |
