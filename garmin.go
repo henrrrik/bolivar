@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 	"regexp"
@@ -57,24 +58,24 @@ func FetchGarminLocation(ctx context.Context, url string) (GarminResult, error) 
 	if err != nil {
 		return GarminResult{}, err
 	}
-	html := string(body)
+	htmlBody := string(body)
 
 	var result GarminResult
 
-	if m := latRe.FindStringSubmatch(html); m != nil {
+	if m := latRe.FindStringSubmatch(htmlBody); m != nil {
 		result.Lat, _ = strconv.ParseFloat(m[1], 64)
 	} else {
 		return GarminResult{}, fmt.Errorf("latitude not found in page")
 	}
 
-	if m := lonRe.FindStringSubmatch(html); m != nil {
+	if m := lonRe.FindStringSubmatch(htmlBody); m != nil {
 		result.Lon, _ = strconv.ParseFloat(m[1], 64)
 	} else {
 		return GarminResult{}, fmt.Errorf("longitude not found in page")
 	}
 
-	if m := senderRe.FindStringSubmatch(html); m != nil {
-		result.Sender = m[1]
+	if m := senderRe.FindStringSubmatch(htmlBody); m != nil {
+		result.Sender = html.UnescapeString(m[1])
 	}
 
 	return result, nil

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html"
 	"testing"
 )
 
@@ -139,5 +140,28 @@ func TestExtractCoordsVariant(t *testing.T) {
 	m = senderRe.FindStringSubmatch(sampleGarminHTML2)
 	if m[1] != "Anna Sjökvist" {
 		t.Errorf("sender = %q, want Anna Sjökvist", m[1])
+	}
+}
+
+const sampleGarminHTMLEncoded = `
+<html>
+<head><title>inReach Message from Henrik Sj&#246;kvist</title></head>
+<body>
+<script>
+lat : 59.387273;
+lon : 17.847655;
+</script>
+</body>
+</html>
+`
+
+func TestExtractCoordsHTMLEncoded(t *testing.T) {
+	m := senderRe.FindStringSubmatch(sampleGarminHTMLEncoded)
+	if m == nil {
+		t.Fatal("sender regex did not match")
+	}
+	unescaped := html.UnescapeString(m[1])
+	if unescaped != "Henrik Sjökvist" {
+		t.Errorf("sender = %q, want Henrik Sjökvist", unescaped)
 	}
 }
