@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -24,8 +25,17 @@ func main() {
 
 	srv := NewServer(db, mapboxToken, webhookUser, webhookPass)
 
+	httpSrv := &http.Server{
+		Addr:              listenAddr,
+		Handler:           srv.Routes(),
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+
 	slog.Info("starting server", "addr", listenAddr)
-	if err := http.ListenAndServe(listenAddr, srv.Routes()); err != nil {
+	if err := httpSrv.ListenAndServe(); err != nil {
 		slog.Error("server error", "error", err)
 		os.Exit(1)
 	}

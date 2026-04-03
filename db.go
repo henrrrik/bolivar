@@ -61,7 +61,7 @@ func InsertMessage(db *sql.DB, m Message) error {
 }
 
 func ListMessages(db *sql.DB) ([]Message, error) {
-	rows, err := db.Query(`SELECT id, garmin_id, sender, message, COALESCE(url, ''), lat, lon, created_at FROM messages ORDER BY created_at DESC`)
+	rows, err := db.Query(`SELECT id, garmin_id, sender, message, COALESCE(url, ''), lat, lon, created_at FROM messages ORDER BY created_at DESC LIMIT 30`)
 	if err != nil {
 		return nil, err
 	}

@@ -3,12 +3,16 @@ package main
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"encoding/json"
 	"html/template"
 	"log/slog"
 	"net/http"
 	"time"
 )
+
+//go:embed static/index.html
+var indexHTML string
 
 type Server struct {
 	db           *sql.DB
@@ -19,7 +23,7 @@ type Server struct {
 }
 
 func NewServer(db *sql.DB, mapboxToken, webhookUser, webhookPass string) *Server {
-	tmpl := template.Must(template.ParseFiles("static/index.html"))
+	tmpl := template.Must(template.New("index").Parse(indexHTML))
 	return &Server{
 		db:          db,
 		mapboxToken: mapboxToken,
