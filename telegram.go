@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -25,6 +26,13 @@ func NewTelegramNotifier(token, chatID string) *TelegramNotifier {
 		chatID: chatID,
 		client: &http.Client{Timeout: 10 * time.Second},
 	}
+}
+
+func escapeHTML(s string) string {
+	s = strings.ReplaceAll(s, "&", "&amp;")
+	s = strings.ReplaceAll(s, "<", "&lt;")
+	s = strings.ReplaceAll(s, ">", "&gt;")
+	return s
 }
 
 func (t *TelegramNotifier) Send(ctx context.Context, msg Message) error {
@@ -57,7 +65,7 @@ func (t *TelegramNotifier) sendMessage(ctx context.Context, text string) error {
 	resp, err := t.client.PostForm(apiURL, url.Values{
 		"chat_id":    {t.chatID},
 		"text":       {text},
-		"parse_mode": {"Markdown"},
+		"parse_mode": {"HTML"},
 	})
 	if err != nil {
 		return err

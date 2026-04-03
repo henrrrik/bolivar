@@ -9,5 +9,4 @@ FROM alpine:3
 RUN apk add --no-cache sqlite
 WORKDIR /app
 COPY --from=build /bolivar /app/bolivar
-COPY static/ /app/static/
 ENTRYPOINT ["/app/bolivar"]
