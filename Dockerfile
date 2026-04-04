@@ -6,8 +6,9 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /bolivar .
 
 FROM alpine:3
+RUN apk add --no-cache ca-certificates
 WORKDIR /app
 COPY --from=build /bolivar /app/bolivar
 EXPOSE 8080
 USER 1000
-ENTRYPOINT ["/app/bolivar"]
+CMD ["/app/bolivar"]
