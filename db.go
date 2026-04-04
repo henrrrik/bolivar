@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type Message struct {
@@ -22,8 +22,8 @@ func (m Message) HasLocation() bool {
 	return m.Lat != nil && m.Lon != nil
 }
 
-func OpenDB(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", path)
+func OpenDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -35,30 +35,35 @@ func OpenDB(path string) (*sql.DB, error) {
 
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS messages (
-			id         INTEGER PRIMARY KEY AUTOINCREMENT,
+			id         BIGSERIAL PRIMARY KEY,
 			garmin_id  TEXT,
 			sender     TEXT,
 			message    TEXT,
 			url        TEXT,
-			lat        REAL,
-			lon        REAL,
-			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-		);
-		CREATE UNIQUE INDEX IF NOT EXISTS idx_garmin_id ON messages(garmin_id);
+			lat        DOUBLE PRECISION,
+			lon        DOUBLE PRECISION,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)
 	`); err != nil {
 		db.Close()
 		return nil, err
 	}
 
-	// Migrate existing databases that lack the url column.
-	db.Exec(`ALTER TABLE messages ADD COLUMN url TEXT`)
+	if _, err := db.Exec(`
+		CREATE UNIQUE INDEX IF NOT EXISTS idx_garmin_id ON messages(garmin_id)
+	`); err != nil {
+		db.Close()
+		return nil, err
+	}
 
 	return db, nil
 }
 
 func InsertMessage(db *sql.DB, m Message) error {
 	_, err := db.Exec(
-		`INSERT OR IGNORE INTO messages (garmin_id, sender, message, url, lat, lon, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO messages (garmin_id, sender, message, url, lat, lon, created_at)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)
+		 ON CONFLICT (garmin_id) DO NOTHING`,
 		m.GarminID, m.Sender, m.Text, m.URL, m.Lat, m.Lon, m.CreatedAt,
 	)
 	return err
