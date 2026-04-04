@@ -14,7 +14,8 @@ func main() {
 	webhookPass := requireEnv("WEBHOOK_PASS")
 
 	databaseURL := requireEnv("DATABASE_URL")
-	listenAddr := envOrDefault("LISTEN_ADDR", ":8080")
+	port := envOrDefault("PORT", "8080")
+	listenAddr := ":" + port
 
 	db, err := OpenDB(databaseURL)
 	if err != nil {
