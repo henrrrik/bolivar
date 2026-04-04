@@ -6,7 +6,9 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /bolivar .
 
 FROM alpine:3
-RUN apk add --no-cache sqlite
+RUN apk add --no-cache sqlite \
+    && mkdir -p /data \
+    && chown 1000:1000 /data
 WORKDIR /app
 COPY --from=build /bolivar /app/bolivar
 EXPOSE 8080
