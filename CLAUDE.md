@@ -6,8 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Bolivar receives SMS messages from a Garmin inReach device via 46elks webhooks, parses geolocation from the embedded Garmin map link, stores messages in SQLite, and displays them on a Mapbox Outdoors map.
 
-red/green tdd
-
 ## Commands
 
 ```bash
@@ -23,6 +21,11 @@ Run the server (requires env vars):
 export MAPBOX_TOKEN=... WEBHOOK_USER=... WEBHOOK_PASS=...
 go run .
 ```
+
+## Build & Test
+- `go test -v -race ./...` — run tests (matches CI)
+- `go fmt ./...` run before committing
+- `go vet ./...` — run before committing
 
 ## Architecture
 
@@ -49,5 +52,7 @@ All via environment variables. Required: `MAPBOX_TOKEN`, `WEBHOOK_USER`, `WEBHOO
 
 ## Workflow
 
+- Use Red/Green TDD
 - Create a PR for all changes — do not push directly to master.
-- CI runs tests and deploys to Fly.io on merge to master.
+- CI runs tests and deploys on merge to master.
+
