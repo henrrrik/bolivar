@@ -34,3 +34,8 @@ Bolivar receives Garmin inReach satellite text messages through an [46elks](http
 | `TELEGRAM_CHAT_ID` | No | — | Telegram group chat ID for notifications |
 | `DATABASE_URL` | Yes | — | PostgreSQL connection string |
 | `LISTEN_ADDR` | No | `:8080` | Address to listen on |
+
+
+## License
+
+Bolivar is released under the [MIT License](http://www.opensource.org/licenses/MIT).
