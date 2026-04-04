@@ -1,4 +1,4 @@
-name: Test & Deploy
+name: Test
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v6
         with:
@@ -19,16 +19,3 @@ jobs:
       - run: go vet ./...
 
       - run: go test -v -race ./...
-
-  deploy:
-    needs: test
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - run: curl -L https://fly.io/install.sh | sh
-
-      - run: /home/runner/.fly/bin/flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

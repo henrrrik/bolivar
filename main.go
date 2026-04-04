@@ -13,10 +13,11 @@ func main() {
 	webhookUser := requireEnv("WEBHOOK_USER")
 	webhookPass := requireEnv("WEBHOOK_PASS")
 
-	dbPath := envOrDefault("DB_PATH", "bolivar.db")
-	listenAddr := envOrDefault("LISTEN_ADDR", ":8080")
+	databaseURL := requireEnv("DATABASE_URL")
+	port := envOrDefault("PORT", "8080")
+	listenAddr := ":" + port
 
-	db, err := OpenDB(dbPath)
+	db, err := OpenDB(databaseURL)
 	if err != nil {
 		slog.Error("failed to open database", "error", err)
 		os.Exit(1)

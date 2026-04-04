@@ -19,7 +19,7 @@ Bolivar receives Garmin inReach satellite text messages through an [46elks](http
 - A Garmin inReach with a subscription
 - An 46elks account with a phone number
 - A Mapbox API key
-- Somewhere to host this (I used [Fly.io](https://fly.io))
+- Somewhere to host this (I use [Runway](https://www.runway.horse))
 - (Optionally) A Telegram bot and a group
 
 
@@ -32,5 +32,5 @@ Bolivar receives Garmin inReach satellite text messages through an [46elks](http
 | `WEBHOOK_PASS` | Yes | — | Basic auth password for the 46elks webhook |
 | `TELEGRAM_BOT_TOKEN` | No | — | Telegram bot API token for notifications |
 | `TELEGRAM_CHAT_ID` | No | — | Telegram group chat ID for notifications |
-| `DB_PATH` | No | `bolivar.db` | Path to the SQLite database file |
+| `DATABASE_URL` | Yes | — | PostgreSQL connection string |
 | `LISTEN_ADDR` | No | `:8080` | Address to listen on |
