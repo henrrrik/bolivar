@@ -2,7 +2,7 @@
 
 ![](https://vignette.wikia.nocookie.net/disney/images/c/c3/Tumblr_n1scdfSDfE1qhcrb0o1_1280.jpg/revision/latest/scale-to-width-down/185?cb=20140302031630)
 
-Garmin inReach devices are really nice, but the backend servie is clunky and kind of ugly (at least the version that supports my inReach mini). Bolivar aims to improve this by providing a nicer way for your loved ones to track your journey through the wilderness. 
+Garmin inReach devices are really nice, but the backend service is clunky and kind of ugly (at least the version that supports my inReach mini). Bolivar aims to improve this by providing a nicer way for your loved ones to track your journey through the wilderness. 
 
 Bolivar receives Garmin inReach satellite text messages through an [46elks](https://46elks.se) phone number, strips out the Garmin map URLs and parses the lat/lon from them, plots them on a map from [Mapbox](https://www.mapbox.com), and optionally forwards them to a [Telegram](https://telegram.org) group along with a map pin. Just add whoever is interested in your trip to the Telegram group instead of adding them as Garmin contacts.
 
