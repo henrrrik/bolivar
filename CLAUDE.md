@@ -54,6 +54,6 @@ All via environment variables. Required: `DATABASE_URL`, `MAPBOX_TOKEN`, `WEBHOO
 ## Workflow
 
 - Use Red/Green TDD
-- Create a PR for all changes — do not push directly to master.
-- CI runs tests and deploys on merge to master.
+- Create a PR for all changes — do not push directly to main.
+- CI runs tests and deploys on merge to main.
 
