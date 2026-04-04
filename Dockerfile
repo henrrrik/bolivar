@@ -13,4 +13,4 @@ WORKDIR /app
 COPY --from=build /bolivar /app/bolivar
 EXPOSE 8080
 USER 1000
-ENTRYPOINT ["/app/bolivar"]
+ENTRYPOINT ["sh", "-c", "echo 'starting...' && ls -la /data && /app/bolivar 2>&1"]
