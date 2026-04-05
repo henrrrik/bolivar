@@ -25,8 +25,9 @@ go run .
 
 ## Build & Test
 - `go test -v -race ./...` — run tests (matches CI)
-- `go fmt ./...` run before committing
+- `gofmt -s -w .` — run before committing
 - `go vet ./...` — run before committing
+- `gocyclo -over 10 .` — run before committing
 
 ## Architecture
 
