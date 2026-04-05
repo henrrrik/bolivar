@@ -25,8 +25,9 @@ go run .
 
 ## Build & Test
 - `go test -v -race ./...` — run tests (matches CI)
-- `go fmt ./...` run before committing
+- `gofmt -s -w .` — run before committing
 - `go vet ./...` — run before committing
+- `gocyclo -over 10 .` — run before committing
 
 ## Architecture
 
@@ -54,6 +55,6 @@ All via environment variables. Required: `DATABASE_URL`, `MAPBOX_TOKEN`, `WEBHOO
 ## Workflow
 
 - Use Red/Green TDD
-- Create a PR for all changes — do not push directly to master.
-- CI runs tests and deploys on merge to master.
+- Create a PR for all changes — do not push directly to main.
+- CI runs tests and deploys on merge to main.
 
