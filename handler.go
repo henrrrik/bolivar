@@ -109,7 +109,9 @@ func (s *Server) handleMessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(msgs)
+	if err := json.NewEncoder(w).Encode(msgs); err != nil {
+		slog.Error("failed to encode messages response", "error", err)
+	}
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
@@ -120,11 +122,15 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusServiceUnavailable)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": status})
+	if err := json.NewEncoder(w).Encode(map[string]string{"status": status}); err != nil {
+		slog.Error("failed to encode health response", "error", err)
+	}
 }
 
 func (s *Server) handleMap(w http.ResponseWriter, r *http.Request) {
-	s.mapTemplate.Execute(w, map[string]string{
+	if err := s.mapTemplate.Execute(w, map[string]string{
 		"MapboxToken": s.mapboxToken,
-	})
+	}); err != nil {
+		slog.Error("failed to render map template", "error", err)
+	}
 }

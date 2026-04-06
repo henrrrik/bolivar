@@ -29,7 +29,7 @@ func OpenDB(dsn string) (*sql.DB, error) {
 	}
 
 	if err := db.Ping(); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, err
 	}
 
@@ -45,14 +45,14 @@ func OpenDB(dsn string) (*sql.DB, error) {
 			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 		)
 	`); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, err
 	}
 
 	if _, err := db.Exec(`
 		CREATE UNIQUE INDEX IF NOT EXISTS idx_garmin_id ON messages(garmin_id)
 	`); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, err
 	}
 
@@ -74,7 +74,7 @@ func ListMessages(db *sql.DB) ([]Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var msgs []Message
 	for rows.Next() {
