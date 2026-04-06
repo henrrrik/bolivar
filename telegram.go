@@ -70,13 +70,13 @@ func (t *TelegramNotifier) sendMessage(ctx context.Context, text string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		var result struct {
 			Description string `json:"description"`
 		}
-		json.NewDecoder(resp.Body).Decode(&result)
+		_ = json.NewDecoder(resp.Body).Decode(&result)
 		return fmt.Errorf("telegram API error %d: %s", resp.StatusCode, result.Description)
 	}
 	return nil
@@ -92,13 +92,13 @@ func (t *TelegramNotifier) sendLocation(ctx context.Context, lat, lon float64) e
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		var result struct {
 			Description string `json:"description"`
 		}
-		json.NewDecoder(resp.Body).Decode(&result)
+		_ = json.NewDecoder(resp.Body).Decode(&result)
 		return fmt.Errorf("telegram API error %d: %s", resp.StatusCode, result.Description)
 	}
 	return nil

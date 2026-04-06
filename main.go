@@ -22,7 +22,7 @@ func main() {
 		slog.Error("failed to open database", "error", err)
 		os.Exit(1)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	telegram := NewTelegramNotifier(
 		os.Getenv("TELEGRAM_BOT_TOKEN"),
